@@ -1,58 +1,83 @@
 package co.analisys.gimnasio.service;
 
-import co.analisys.gimnasio.model.Clase;
-import co.analisys.gimnasio.model.Entrenador;
-import co.analisys.gimnasio.model.Equipo;
-import co.analisys.gimnasio.model.Miembro;
-import co.analisys.gimnasio.repository.ClaseRepository;
-import co.analisys.gimnasio.repository.EntrenadorRepository;
-import co.analisys.gimnasio.repository.EquipoRepository;
-import co.analisys.gimnasio.repository.MiembroRepository;
+import co.analisys.gimnasio.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class GimnasioService {
     @Autowired
-    private MiembroRepository miembroRepository;
-    @Autowired
-    private ClaseRepository claseRepository;
-    @Autowired
-    private EntrenadorRepository entrenadorRepository;
-    @Autowired
-    private EquipoRepository equipoRepository;
+    private RestTemplate restTemplate;
 
-    public Miembro registrarMiembro(Miembro miembro) {
-        return miembroRepository.save(miembro);
+    private static final String MIEMBROS_URL = "http://localhost:8081/miembros";
+    private static final String ENTRENADORES_URL = "http://localhost:8082/entrenadores";
+    private static final String CLASES_URL = "http://localhost:8083/clases";
+    private static final String EQUIPOS_URL = "http://localhost:8084/equipos";
+
+    public MiembroDTO registrarMiembro(MiembroDTO miembro) {
+        if (miembro.getInscripcion() == null) {
+            InscripcionDTO inscripcion = new InscripcionDTO();
+            inscripcion.setFecha(LocalDate.now());
+            miembro.setInscripcion(inscripcion);
+        }
+        return restTemplate.postForObject(MIEMBROS_URL, miembro, MiembroDTO.class);
     }
 
-    public Clase programarClase(Clase clase) {
-        return claseRepository.save(clase);
+    public ClaseDTO programarClase(ClaseDTO clase) {
+        if (clase.getHorario() == null) {
+            throw new IllegalArgumentException("La clase debe tener un horario programado");
+        }
+        
+        if (clase.getHorario().getFechaHora() == null) {
+            throw new IllegalArgumentException("El horario debe tener una fecha y hora");
+        }
+        
+        if (clase.getHorario().getDuracionMinutos() == null || 
+            clase.getHorario().getDuracionMinutos() <= 0) {
+            throw new IllegalArgumentException("El horario debe tener una duración válida en minutos");
+        }
+
+        if (clase.getEntrenadorId() == null) {
+            throw new IllegalArgumentException("La clase debe tener un entrenador asignado");
+        }
+
+        return restTemplate.postForObject(CLASES_URL, clase, ClaseDTO.class);
     }
 
-    public Entrenador agregarEntrenador(Entrenador entrenador) {
-        return entrenadorRepository.save(entrenador);
+    public EntrenadorDTO agregarEntrenador(EntrenadorDTO entrenador) {
+        if (entrenador.getEspecialidad() != null && 
+            entrenador.getEspecialidad().getNombre() == null) {
+            throw new IllegalArgumentException("La especialidad debe tener un nombre");
+        }
+        return restTemplate.postForObject(ENTRENADORES_URL, entrenador, EntrenadorDTO.class);
     }
 
-    public Equipo agregarEquipo(Equipo equipo) {
-        return equipoRepository.save(equipo);
+    public EquipoDTO agregarEquipo(EquipoDTO equipo) {
+        return restTemplate.postForObject(EQUIPOS_URL, equipo, EquipoDTO.class);
     }
 
-    public List<Miembro> obtenerTodosMiembros() {
-        return miembroRepository.findAll();
+    public List<MiembroDTO> obtenerTodosMiembros() {
+        MiembroDTO[] miembros = restTemplate.getForObject(MIEMBROS_URL, MiembroDTO[].class);
+        return miembros != null ? Arrays.asList(miembros) : List.of();
     }
 
-    public List<Clase> obtenerTodasClases() {
-        return claseRepository.findAll();
+    public List<ClaseDTO> obtenerTodasClases() {
+        ClaseDTO[] clases = restTemplate.getForObject(CLASES_URL, ClaseDTO[].class);
+        return clases != null ? Arrays.asList(clases) : List.of();
     }
 
-    public List<Entrenador> obtenerTodosEntrenadores() {
-        return entrenadorRepository.findAll();
+    public List<EntrenadorDTO> obtenerTodosEntrenadores() {
+        EntrenadorDTO[] entrenadores = restTemplate.getForObject(ENTRENADORES_URL, EntrenadorDTO[].class);
+        return entrenadores != null ? Arrays.asList(entrenadores) : List.of();
     }
 
-    public List<Equipo> obtenerTodosEquipos() {
-        return equipoRepository.findAll();
+    public List<EquipoDTO> obtenerTodosEquipos() {
+        EquipoDTO[] equipos = restTemplate.getForObject(EQUIPOS_URL, EquipoDTO[].class);
+        return equipos != null ? Arrays.asList(equipos) : List.of();
     }
 }

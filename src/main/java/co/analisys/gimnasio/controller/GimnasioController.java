@@ -1,9 +1,6 @@
 package co.analisys.gimnasio.controller;
 
-import co.analisys.gimnasio.model.Clase;
-import co.analisys.gimnasio.model.Entrenador;
-import co.analisys.gimnasio.model.Equipo;
-import co.analisys.gimnasio.model.Miembro;
+import co.analisys.gimnasio.dto.*;
 import co.analisys.gimnasio.service.GimnasioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,42 +14,42 @@ public class GimnasioController {
     private GimnasioService gimnasioService;
 
     @PostMapping("/miembros")
-    public Miembro registrarMiembro(@RequestBody Miembro miembro) {
+    public MiembroDTO registrarMiembro(@RequestBody MiembroDTO miembro) {
         return gimnasioService.registrarMiembro(miembro);
     }
 
     @PostMapping("/clases")
-    public Clase programarClase(@RequestBody Clase clase) {
+    public ClaseDTO programarClase(@RequestBody ClaseDTO clase) {
         return gimnasioService.programarClase(clase);
     }
 
     @PostMapping("/entrenadores")
-    public Entrenador agregarEntrenador(@RequestBody Entrenador entrenador) {
+    public EntrenadorDTO agregarEntrenador(@RequestBody EntrenadorDTO entrenador) {
         return gimnasioService.agregarEntrenador(entrenador);
     }
 
     @PostMapping("/equipos")
-    public Equipo agregarEquipo(@RequestBody Equipo equipo) {
+    public EquipoDTO agregarEquipo(@RequestBody EquipoDTO equipo) {
         return gimnasioService.agregarEquipo(equipo);
     }
 
     @GetMapping("/miembros")
-    public List<Miembro> obtenerTodosMiembros() {
+    public List<MiembroDTO> obtenerTodosMiembros() {
         return gimnasioService.obtenerTodosMiembros();
     }
 
     @GetMapping("/clases")
-    public List<Clase> obtenerTodasClases() {
+    public List<ClaseDTO> obtenerTodasClases() {
         return gimnasioService.obtenerTodasClases();
     }
 
     @GetMapping("/entrenadores")
-    public List<Entrenador> obtenerTodosEntrenadores() {
+    public List<EntrenadorDTO> obtenerTodosEntrenadores() {
         return gimnasioService.obtenerTodosEntrenadores();
     }
 
     @GetMapping("/equipos")
-    public List<Equipo> obtenerTodosEquipos() {
+    public List<EquipoDTO> obtenerTodosEquipos() {
         return gimnasioService.obtenerTodosEquipos();
     }
 }
