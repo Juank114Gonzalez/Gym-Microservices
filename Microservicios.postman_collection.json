@@ -1,0 +1,496 @@
+{
+	"info": {
+		"_postman_id": "ed106e96-84f2-431b-b7d9-9a4d4c2f4bf8",
+		"name": "Microservicios",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29462671"
+	},
+	"item": [
+		{
+			"name": "Entrenadores",
+			"item": [
+				{
+					"name": "GetEntrenadores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/entrenadores",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"entrenadores"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PostEntrenadores",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Miguel Torres\",\r\n    \"especialidad\": {\r\n        \"nombre\": \"Funcional\",\r\n        \"descripcion\": \"Entrenador certificado en entrenamiento funcional\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/entrenadores",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"entrenadores"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOneEntrenador",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/entrenadores/5/existe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"entrenadores",
+								"5",
+								"existe"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Miembros",
+			"item": [
+				{
+					"name": "GetMiembros",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/miembros",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"miembros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PostMiembros",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Roberto Gómez\",\r\n    \"email\": \"roberto@email.com\",\r\n    \"inscripcion\": {\r\n        \"fecha\": \"2024-03-20\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/miembros",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"miembros"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clases",
+			"item": [
+				{
+					"name": "GetClases",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/clases",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"clases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PostClases",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Zumba Fitness\",\r\n    \"capacidadMaxima\": 25,\r\n    \"entrenadorId\": 1,\r\n    \"horario\": {\r\n        \"fechaHora\": \"2024-03-21T17:00:00\",\r\n        \"duracionMinutos\": 60\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8083/clases",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"clases"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Equipos",
+			"item": [
+				{
+					"name": "GetEquipos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8084/equipos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"equipos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PostEquipos",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"TRX\",\r\n    \"descripcion\": \"Sistema de entrenamiento en suspensión\",\r\n    \"cantidad\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8084/equipos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"equipos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gym",
+			"item": [
+				{
+					"name": "PostGymMiembros",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Carmen Díaz\",\r\n    \"email\": \"carmen@email.com\",\r\n    \"inscripcion\": {\r\n        \"fecha\": \"2024-03-20\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/gimnasio/miembros",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"gimnasio",
+								"miembros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetGymMiembros",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Carmen Díaz\",\r\n    \"email\": \"carmen@email.com\",\r\n    \"inscripcion\": {\r\n        \"fecha\": \"2024-03-20\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/gimnasio/miembros",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"gimnasio",
+								"miembros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PostGymClases",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"HIIT Training\",\r\n    \"capacidadMaxima\": 15,\r\n    \"entrenadorId\": 2,\r\n    \"horario\": {\r\n        \"fechaHora\": \"2024-03-22T08:00:00\",\r\n        \"duracionMinutos\": 45\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/gimnasio/clases",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"gimnasio",
+								"clases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetGymClases",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"HIIT Training\",\r\n    \"capacidadMaxima\": 15,\r\n    \"entrenadorId\": 2,\r\n    \"horario\": {\r\n        \"fechaHora\": \"2024-03-22T08:00:00\",\r\n        \"duracionMinutos\": 45\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/gimnasio/clases",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"gimnasio",
+								"clases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PostGymEntrenadores",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Lucía Ramírez\",\r\n    \"especialidad\": {\r\n        \"nombre\": \"Boxeo\",\r\n        \"descripcion\": \"Entrenadora certificada en boxeo deportivo\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/gimnasio/entrenadores",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"gimnasio",
+								"entrenadores"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetGymEntrenadores",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Lucía Ramírez\",\r\n    \"especialidad\": {\r\n        \"nombre\": \"Boxeo\",\r\n        \"descripcion\": \"Entrenadora certificada en boxeo deportivo\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/gimnasio/entrenadores",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"gimnasio",
+								"entrenadores"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PostGymEquipos",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Balón medicinal\",\r\n    \"descripcion\": \"Balones de 5kg para entrenamiento funcional\",\r\n    \"cantidad\": 8\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/gimnasio/equipos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"gimnasio",
+								"equipos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PostGymEquipos Copy",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Balón medicinal\",\r\n    \"descripcion\": \"Balones de 5kg para entrenamiento funcional\",\r\n    \"cantidad\": 8\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/gimnasio/equipos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"gimnasio",
+								"equipos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
