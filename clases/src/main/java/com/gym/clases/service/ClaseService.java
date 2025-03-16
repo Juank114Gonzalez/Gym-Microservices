@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import com.gym.clases.client.EntrenadoresClient;
 
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class ClaseService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private EntrenadoresClient entrenadoresClient;
+
     @Transactional
     public Clase programarClase(Clase clase) {
         if (clase.getHorario() == null) {
@@ -26,9 +30,7 @@ public class ClaseService {
         
         // Verificar si el entrenador existe y obtener sus datos
         try {
-            EntrenadorDTO entrenador = restTemplate.getForObject(
-                "http://localhost:8082/entrenadores/" + clase.getEntrenadorId(),
-                EntrenadorDTO.class);
+            EntrenadorDTO entrenador = entrenadoresClient.getOneEntrenador(clase.getEntrenadorId());
             
             if (entrenador != null) {
                 clase.setNombreEntrenador(entrenador.getNombre());
@@ -48,9 +50,7 @@ public class ClaseService {
         
         for (Clase clase : clases) {
             try {
-                EntrenadorDTO entrenador = restTemplate.getForObject(
-                    "http://localhost:8082/entrenadores/" + clase.getEntrenadorId(),
-                    EntrenadorDTO.class);
+                EntrenadorDTO entrenador = entrenadoresClient.getOneEntrenador(clase.getEntrenadorId());
                 
                 if (entrenador != null) {
                     clase.setNombreEntrenador(entrenador.getNombre());

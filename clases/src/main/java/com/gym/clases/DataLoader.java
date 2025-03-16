@@ -6,8 +6,7 @@ import com.gym.clases.service.ClaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
+import com.gym.clases.client.EntrenadoresClient;
 import java.time.LocalDateTime;
 
 @Component
@@ -17,16 +16,16 @@ public class DataLoader implements CommandLineRunner {
     private ClaseService claseService;
     
     @Autowired
-    private RestTemplate restTemplate;
+    private EntrenadoresClient entrenadoresClient;
 
     @Override
     public void run(String... args) throws Exception {
         try {
             // Verificar si el servicio de entrenadores está disponible
-            restTemplate.getForObject("http://localhost:8082/entrenadores/1", Object.class);
+            entrenadoresClient.checkForEntrenadoresHealth();
             
             // Si llegamos aquí, el servicio de entrenadores está disponible
-            cargarDatosEjemplo();
+            //cargarDatosEjemplo();
         } catch (Exception e) {
             System.out.println("El servicio de entrenadores no está disponible. Los datos de ejemplo se cargarán cuando el servicio esté activo.");
         }
