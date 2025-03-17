@@ -87,8 +87,18 @@ public class ClaseService {
         if (clase == null) {
             throw new RuntimeException("La clase con ID " + id + " no existe");
         }
+
         clase.setHorario(horario);
-        String notificacion = "La clase " + clase.getNombre() + " ha cambiado de horario a las " + horario.getFechaHora();
+        String notificacion="";
+
+        if(horario.getFechaHora().isBefore(LocalDateTime.now())){
+            notificacion="imposible cambiar a la fecha :"+horario.getFechaHora();
+            rabbitTemplate.convertAndSend("dlx-exchange", "dlq", notificacion);
+            System.out.println("NOTIFICACION ENVIADA A COLA MUERTA");
+            throw new RuntimeException("La fecha y hora de la clase no puede ser anterior a la fecha y hora actual");
+        }
+
+        notificacion = "La clase " + clase.getNombre() + " ha cambiado de horario a las " + horario.getFechaHora();
         rabbitTemplate.convertAndSend("clase.exchange", "horario.routingkey",
         notificacion);
         return claseRepository.save(clase);   

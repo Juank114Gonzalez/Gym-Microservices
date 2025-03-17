@@ -6,13 +6,23 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.amqp.core.QueueBuilder;
 
 @Configuration
 public class RabbitMQConfig {
     @Bean
     public Queue horarioQueue() {
-        return new Queue("horario.queue", true);
+        return QueueBuilder.durable("horario.queue")
+        .withArgument("x-dead-letter-exchange", "dlx-exchange")
+        .withArgument("x-dead-letter-routing-key", "dlq")
+        .build();
     }
+
+    @Bean
+    public Queue dlq() {
+        return QueueBuilder.durable("dlq").build();
+    }
+
 
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
