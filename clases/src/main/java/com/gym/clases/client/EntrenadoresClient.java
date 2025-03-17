@@ -12,7 +12,7 @@ import com.gym.clases.dto.EntrenadorDTO;
 @FeignClient(name = "entrenadores-config" , url = "http://localhost:8082", configuration = FeignConfig.class)
 public interface EntrenadoresClient { 
 
-    @GetMapping("/entrenadores/")
+    @GetMapping("/entrenadores/{id}")
     public EntrenadorDTO getOneEntrenador(@PathVariable("id") Long id);
 
     @GetMapping("/entrenadores/public/status")

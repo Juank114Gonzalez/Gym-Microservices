@@ -54,4 +54,11 @@ public class ClaseController {
         List<Clase> clases = claseService.obtenerTodasClases();
         return ResponseEntity.ok(clases);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/seeder")
+    public ResponseEntity<Boolean> cargarDatos() {
+        Boolean cositas = claseService.cargarDatosEjemplo();
+        return ResponseEntity.ok(cositas);
+    }
 } 
