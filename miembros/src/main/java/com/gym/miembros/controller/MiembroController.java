@@ -47,4 +47,18 @@ public class MiembroController {
     public List<Miembro> obtenerTodosMiembros() {
         return miembroService.obtenerTodosMiembros();
     }
+
+    @Operation(
+    summary = "Obtener miembro por id",
+    description = "retorna objeto miembro si existe",
+    responses = {
+        @ApiResponse(responseCode = "200", description = "Miembro encontrado"),
+        @ApiResponse(responseCode = "403", description = "No autorizado para ver miembros")
+    }
+    )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TRAINER)")
+    @GetMapping("/miembro/{id}")
+    public Miembro obtenerMiembro(@PathVariable Long id) {
+        return miembroService.obtenerMiembroPorId(id);
+    }
 }

@@ -1,4 +1,4 @@
-package com.gym.miembros.model;
+package com.gym.clases.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -13,8 +13,10 @@ public class Inscripcion {
     private Long id;
     private LocalDate fecha;
     
-    @OneToOne
-    @JoinColumn(name = "miembro_id")
-    @JsonBackReference
-    private Miembro miembro;
+    @Column(unique = true, nullable = false)
+    private Long miembroId;
+
+    @ManyToOne
+    @JoinColumn(name = "clase_id", unique = true, nullable = false)
+    private Clase clase;    
 } 

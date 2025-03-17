@@ -16,15 +16,26 @@ public class RabbitMQConfig {
     public Queue horarioQueue() {
         return new Queue("horario.queue", true);
     }
-
+    
+    @Bean
+    public Queue inscripcionQueue() {
+        return new Queue("inscripcion.queue", true);
+    }
+    
     @Bean
     public TopicExchange claseExchange() {
         return new TopicExchange("clase.exchange");
     }
 
     @Bean
-    public Binding binding(Queue horarioQueue, TopicExchange horarioExchange) {
-        return BindingBuilder.bind(horarioQueue).to(horarioExchange).with("horario.routingkey");
+    public Binding bindingHorario(Queue horarioQueue, TopicExchange claseExchange) {
+        return BindingBuilder.bind(horarioQueue).to(claseExchange).with("horario.routingkey");
+    }
+
+
+    @Bean
+    public Binding bindingInscripcion(Queue inscripcionQueue, TopicExchange claseExchange) {
+        return BindingBuilder.bind(inscripcionQueue).to(claseExchange).with("inscripcion.routingkey");
     }
 
     @Bean

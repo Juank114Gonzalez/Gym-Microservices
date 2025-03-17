@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+import com.gym.clases.dto.InscripcionDTO;
+import com.gym.clases.model.Inscripcion;
 import java.util.List;
 
 @RestController
@@ -56,12 +57,42 @@ public class ClaseController {
         return ResponseEntity.ok(clases);
     }
 
+    @Operation(
+        summary = "Cambiar horario de una clase",
+        description = "Cambiar el horario de una clase existente a partir del id de la misma",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Clase programada exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos de la hora inválidos"),
+            @ApiResponse(responseCode = "403", description = "No autorizado para programar clases")
+        }
+    )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TRAINER')")
     @PatchMapping("/cambiarHorario/{id}")
     public ResponseEntity<Clase> cambiarHorario(@RequestBody Horario horario, @PathVariable Long id) {
         try {
             Clase claseModificada = claseService.editarHorario(horario, id);
             return ResponseEntity.ok(claseModificada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    @Operation(
+        summary = "Inscribir un mimebro a una clase",
+        description = "Insribe un miembro a una clase existente a partir del id de la clase y el miembro",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Inscripción exitosa"),
+            @ApiResponse(responseCode = "400", description = "Datos de la inscripción inválidos"),
+            @ApiResponse(responseCode = "403", description = "No autorizado para Inscribir miembros")
+        }
+    )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TRAINER')")
+    @PostMapping("/inscribirMiembro")
+    public ResponseEntity<Inscripcion> inscribirMiembroEnClase(@RequestBody InscripcionDTO inscripcion) {
+        try {
+            Inscripcion inscripcionNueva = claseService.inscribirMiembro(inscripcion);
+            return ResponseEntity.ok(inscripcionNueva);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }

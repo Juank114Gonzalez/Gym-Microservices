@@ -20,7 +20,4 @@ public class Miembro {
     private String nombre;
     private String email;
     
-    @OneToOne(mappedBy = "miembro", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Inscripcion inscripcion;
 }

@@ -1,15 +1,19 @@
 package com.gym.clases.service;
 
 import com.gym.clases.dto.EntrenadorDTO;
+import com.gym.clases.dto.InscripcionDTO;
 import com.gym.clases.model.Clase;
+import com.gym.clases.model.Inscripcion;
 import com.gym.clases.model.Horario;
 import com.gym.clases.repository.ClaseRepository;
+import com.gym.clases.repository.InscripcionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import com.gym.clases.client.EntrenadoresClient;
 import org.springframework.amqp.rabbit.core.RabbitTemplate; 
+import java.time.LocalDate;
 
 import com.gym.clases.model.Horario;
 import java.time.LocalDateTime;
@@ -20,6 +24,9 @@ import java.util.List;
 public class ClaseService {
     @Autowired
     private ClaseRepository claseRepository;
+
+    @Autowired
+    private InscripcionRepository inscripcionRepository;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -112,6 +119,24 @@ public class ClaseService {
         }
     }
     
+
+    @Transactional
+    public Inscripcion inscribirMiembro(InscripcionDTO inscripcionDto) {
+        Clase clase = claseRepository.findById(inscripcionDto.getClaseId()).orElse(null);
+        if (clase == null) {
+            throw new RuntimeException("La clase con ID " + inscripcionDto.getClaseId() + " no existe");
+        }
+        List<Inscripcion> miembros =  inscripcionRepository.findByMiembroId(inscripcionDto.getMiembroId());
+        if (clase.getCapacidadMaxima() <= miembros.size()) {
+            throw new RuntimeException("La clase con ID " + inscripcionDto.getClaseId()+ " está llena");
+        }
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setFecha(LocalDate.now());
+        inscripcion.setMiembroId(inscripcionDto.getMiembroId());
+        inscripcion.setClase(clase);
+        return inscripcionRepository.save(inscripcion);
+    }
+
     @Transactional
     public Boolean cargarDatosEjemplo() {
         // Crear clases de ejemplo
