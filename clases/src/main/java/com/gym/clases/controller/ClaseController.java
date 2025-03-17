@@ -1,6 +1,7 @@
 package com.gym.clases.controller;
 
 import com.gym.clases.model.Clase;
+import com.gym.clases.model.Horario;
 import com.gym.clases.service.ClaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,6 +55,18 @@ public class ClaseController {
         List<Clase> clases = claseService.obtenerTodasClases();
         return ResponseEntity.ok(clases);
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TRAINER')")
+    @PatchMapping("/cambiarHorario/{id}")
+    public ResponseEntity<Clase> cambiarHorario(@RequestBody Horario horario, @PathVariable Long id) {
+        try {
+            Clase claseModificada = claseService.editarHorario(horario, id);
+            return ResponseEntity.ok(claseModificada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/seeder")

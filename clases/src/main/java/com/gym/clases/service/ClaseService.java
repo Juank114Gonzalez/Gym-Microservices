@@ -2,12 +2,14 @@ package com.gym.clases.service;
 
 import com.gym.clases.dto.EntrenadorDTO;
 import com.gym.clases.model.Clase;
+import com.gym.clases.model.Horario;
 import com.gym.clases.repository.ClaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import com.gym.clases.client.EntrenadoresClient;
+import org.springframework.amqp.rabbit.core.RabbitTemplate; 
 
 import com.gym.clases.model.Horario;
 import java.time.LocalDateTime;
@@ -24,6 +26,9 @@ public class ClaseService {
 
     @Autowired
     private EntrenadoresClient entrenadoresClient;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Transactional
     public Clase programarClase(Clase clase) {
@@ -67,6 +72,23 @@ public class ClaseService {
         
         return clases;
     }
+
+    
+    @Transactional
+    public Clase editarHorario(Horario horario, Long id) {
+        Clase clase = claseRepository.findById(id).orElse(null);
+        if (clase == null) {
+            throw new RuntimeException("La clase con ID " + id + " no existe");
+        }
+        clase.setHorario(horario);
+        String notificacion = "La clase " + clase.getNombre() + " ha cambiado de horario a las " + horario.getFechaHora();
+        rabbitTemplate.convertAndSend("clase.exchange", "horario.routingkey",
+        notificacion);
+        return claseRepository.save(clase);   
+    }
+
+   
+
 
     private void saveClase(Clase claseNueva) {
         if (claseNueva.getHorario() == null) {

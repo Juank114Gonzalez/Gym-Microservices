@@ -28,4 +28,9 @@ public class MiembroService {
     public List<Miembro> obtenerTodosMiembros() {
         return miembroRepository.findAll();
     }
+
+    public void enviarNotificacion(String notificacion) {
+        // Simular envío de notificación
+        System.out.println("Notificación enviada: " + notificacion);
+    }
 }
