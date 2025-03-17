@@ -13,6 +13,11 @@ public class EntrenadorService {
     @Autowired
     private EntrenadorRepository entrenadorRepository;
 
+    public void enviarNotificacion(String notificacion) {
+        // Simular envío de notificación
+        System.out.println("Notificación enviada: " + notificacion);
+    }   
+
     public Entrenador agregarEntrenador(Entrenador entrenador) {
         if (entrenador.getEspecialidad() != null) {
             entrenador.getEspecialidad().setEntrenador(entrenador);

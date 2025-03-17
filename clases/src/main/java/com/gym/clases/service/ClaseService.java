@@ -134,6 +134,8 @@ public class ClaseService {
         inscripcion.setFecha(LocalDate.now());
         inscripcion.setMiembroId(inscripcionDto.getMiembroId());
         inscripcion.setClase(clase);
+        String notificacion = "El miembro con ID " + inscripcionDto.getMiembroId() + " se ha inscrito a la clase " + clase.getNombre(); 
+        rabbitTemplate.convertAndSend("clase.exchange", "inscripcion.routingkey", notificacion);
         return inscripcionRepository.save(inscripcion);
     }
 
