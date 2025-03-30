@@ -2,6 +2,7 @@ package com.gym.clases.service;
 
 import com.gym.clases.dto.EntrenadorDTO;
 import com.gym.clases.dto.InscripcionDTO;
+import com.gym.clases.dto.ClaseRegistradaDTO;
 import com.gym.clases.model.Clase;
 import com.gym.clases.model.Inscripcion;
 import com.gym.clases.model.Horario;
@@ -12,7 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import com.gym.clases.client.EntrenadoresClient;
-import org.springframework.amqp.rabbit.core.RabbitTemplate; 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import java.time.LocalDate;
 
 import com.gym.clases.model.Horario;
@@ -37,6 +39,11 @@ public class ClaseService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private KafkaTemplate<String, ClaseRegistradaDTO> kafkaTemplate;
+
+    private final String CLASSES_TOPIC_NAME = "ocupacion-clases";
+
     @Transactional
     public Clase programarClase(Clase clase) {
         if (clase.getHorario() == null) {
@@ -51,7 +58,21 @@ public class ClaseService {
                 clase.setNombreEntrenador(entrenador.getNombre());
                 clase.setEspecialidadEntrenador(entrenador.getEspecialidad());
                 clase.getHorario().setClase(clase);
-                return claseRepository.save(clase);
+
+                Clase claseGuardada = claseRepository.save(clase);
+
+                ClaseRegistradaDTO claseRegistrada = ClaseRegistradaDTO.builder()
+                    .nombre(claseGuardada.getNombre())
+                    .capacidadMaxima(claseGuardada.getCapacidadMaxima())
+                    .entrenadorId(claseGuardada.getEntrenadorId())
+                    .build();
+                
+                kafkaTemplate.send(
+                    "ocupacion-clases",
+                    claseRegistrada
+                );
+
+                return claseGuardada;
             } else {
                 throw new RuntimeException("El entrenador con ID " + clase.getEntrenadorId() + " no existe");
             }
