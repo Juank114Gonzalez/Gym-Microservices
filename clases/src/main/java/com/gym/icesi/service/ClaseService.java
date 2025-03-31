@@ -64,20 +64,7 @@ public class ClaseService {
                 clase.setEspecialidadEntrenador(entrenador.getEspecialidad());
                 clase.getHorario().setClase(clase);
 
-                Clase claseGuardada = claseRepository.save(clase);
-
-                ClaseRegistradaDTO claseRegistrada = ClaseRegistradaDTO.builder()
-                    .nombre(claseGuardada.getNombre())
-                    .capacidadMaxima(claseGuardada.getCapacidadMaxima())
-                    .entrenadorId(claseGuardada.getEntrenadorId())
-                    .build();
-                
-                kafkaTemplate.send(
-                    "ocupacion-clases",
-                    claseRegistrada
-                );
-
-                return claseGuardada;
+                return claseRepository.save(clase);
             } else {
                 throw new RuntimeException("El entrenador con ID " + clase.getEntrenadorId() + " no existe");
             }
@@ -189,9 +176,12 @@ public class ClaseService {
 
         // Notificar por Kafka la actualización de ocupación
         ClaseRegistradaDTO claseRegistrada = ClaseRegistradaDTO.builder()
+            .id(clase.getId())
             .nombre(clase.getNombre())
             .capacidadMaxima(clase.getCapacidadMaxima())
             .entrenadorId(clase.getEntrenadorId())
+            .ocupacionActual(clase.getOcupacionActual())
+            .nombreEntrenador(clase.getNombreEntrenador())
             .build();
         kafkaTemplate.send("ocupacion-clases", claseRegistrada);
 

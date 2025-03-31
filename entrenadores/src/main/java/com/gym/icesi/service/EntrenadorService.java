@@ -44,7 +44,7 @@ public class EntrenadorService {
 
     @KafkaListener(topics = {CLASSES_TOPIC_NAME}, groupId = "classes-streaming")
     public void notificacionClasesTiempoReal(ClaseRegistradaDTO clase){
-        System.out.println("Han registrado una nueva clase:  " + clase.toString());
+        System.out.println("Alguien se ha registrado a una clase:  " + clase.toString());
     }
 
 }
