@@ -56,7 +56,7 @@ public class MiembroController {
         @ApiResponse(responseCode = "403", description = "No autorizado para ver miembros")
     }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TRAINER)")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TRAINER')")
     @GetMapping("/miembro/{id}")
     public Miembro obtenerMiembro(@PathVariable Long id) {
         return miembroService.obtenerMiembroPorId(id);

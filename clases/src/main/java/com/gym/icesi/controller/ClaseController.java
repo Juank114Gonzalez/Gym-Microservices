@@ -79,20 +79,20 @@ public class ClaseController {
 
 
     @Operation(
-        summary = "Inscribir un mimebro a una clase",
-        description = "Insribe un miembro a una clase existente a partir del id de la clase y el miembro",
+        summary = "Inscribir un miembro a una clase",
+        description = "Inscribe un miembro a una clase existente. Accesible para miembros.",
         responses = {
             @ApiResponse(responseCode = "200", description = "Inscripción exitosa"),
-            @ApiResponse(responseCode = "400", description = "Datos de la inscripción inválidos"),
-            @ApiResponse(responseCode = "403", description = "No autorizado para Inscribir miembros")
+            @ApiResponse(responseCode = "400", description = "Error en la inscripción"),
+            @ApiResponse(responseCode = "403", description = "No autorizado")
         }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TRAINER')")
-    @PostMapping("/inscribirMiembro")
-    public ResponseEntity<Inscripcion> inscribirMiembroEnClase(@RequestBody InscripcionDTO inscripcion) {
+    @PreAuthorize("hasAnyRole('ROLE_MEMBER', 'ROLE_ADMIN')")
+    @PostMapping("/inscribir")
+    public ResponseEntity<Inscripcion> inscribirseAClase(@RequestBody InscripcionDTO inscripcion) {
         try {
-            Inscripcion inscripcionNueva = claseService.inscribirMiembro(inscripcion);
-            return ResponseEntity.ok(inscripcionNueva);
+            Inscripcion nuevaInscripcion = claseService.inscribirMiembro(inscripcion);
+            return ResponseEntity.ok(nuevaInscripcion);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }

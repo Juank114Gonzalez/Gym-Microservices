@@ -10,8 +10,8 @@ import com.gym.icesi.config.FeignConfig;
 import com.gym.icesi.dto.MiembroDTO;
 
 @FeignClient(name = "miembros-config" , url = "http://localhost:8081/miembros", configuration = FeignConfig.class)
-public interface miembrosClient { 
+public interface MiembrosClient { 
 
     @GetMapping("/miembro/{id}")
-    public MiembroDTO getOneEntrenador(@PathVariable("id") Long id);
+    public MiembroDTO getOneMiembro(@PathVariable("id") Long id);
 }

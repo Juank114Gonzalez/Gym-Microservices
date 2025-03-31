@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import com.gym.icesi.dto.EspecialidadDTO;
 import lombok.Data;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -14,6 +16,7 @@ public class Clase {
     private String nombre;
     private int capacidadMaxima;
     private Long entrenadorId;
+    private int ocupacionActual = 0;
     
     @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL)
@@ -25,4 +28,8 @@ public class Clase {
     
     @Transient
     private EspecialidadDTO especialidadEntrenador;
+    
+    @OneToMany(mappedBy = "clase", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Inscripcion> inscripciones = new ArrayList<>();
 }

@@ -21,6 +21,8 @@ import com.gym.icesi.model.Horario;
 import java.time.LocalDateTime;
 
 import java.util.List;
+import com.gym.icesi.client.MiembrosClient;
+import com.gym.icesi.dto.MiembroDTO;
 
 @Service
 public class ClaseService {
@@ -35,6 +37,9 @@ public class ClaseService {
 
     @Autowired
     private EntrenadoresClient entrenadoresClient;
+
+    @Autowired
+    private MiembrosClient miembrosClient;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -152,21 +157,48 @@ public class ClaseService {
     
 
     @Transactional
-    public Inscripcion inscribirMiembro(InscripcionDTO inscripcionDto) {
-        Clase clase = claseRepository.findById(inscripcionDto.getClaseId()).orElse(null);
-        if (clase == null) {
-            throw new RuntimeException("La clase con ID " + inscripcionDto.getClaseId() + " no existe");
+    public Inscripcion inscribirMiembro(InscripcionDTO inscripcionDTO) {
+        Clase clase = claseRepository.findById(inscripcionDTO.getClaseId())
+            .orElseThrow(() -> new RuntimeException("Clase no encontrada"));
+
+        // Verificar si hay cupo disponible
+        if (clase.getOcupacionActual() >= clase.getCapacidadMaxima()) {
+            throw new RuntimeException("La clase está llena");
         }
-        List<Inscripcion> miembros =  inscripcionRepository.findByMiembroId(inscripcionDto.getMiembroId());
-        if (clase.getCapacidadMaxima() <= miembros.size()) {
-            throw new RuntimeException("La clase con ID " + inscripcionDto.getClaseId()+ " está llena");
+
+        // Verificar si el miembro existe
+        MiembroDTO miembro = miembrosClient.getOneMiembro(inscripcionDTO.getMiembroId());
+        if (miembro == null) {
+            throw new RuntimeException("Miembro no encontrado");
         }
+
+        // Verificar si el miembro ya está inscrito
+        if (inscripcionRepository.findByMiembroIdAndClase(inscripcionDTO.getMiembroId(), clase) != null) {
+            throw new RuntimeException("El miembro ya está inscrito en esta clase");
+        }
+
+        // Crear la inscripción
         Inscripcion inscripcion = new Inscripcion();
-        inscripcion.setFecha(LocalDate.now());
-        inscripcion.setMiembroId(inscripcionDto.getMiembroId());
+        inscripcion.setMiembroId(inscripcionDTO.getMiembroId());
         inscripcion.setClase(clase);
-        String notificacion = "El miembro con ID " + inscripcionDto.getMiembroId() + " se ha inscrito a la clase " + clase.getNombre(); 
-        rabbitTemplate.convertAndSend("clase.exchange", "inscripcion.routingkey", notificacion);
+        inscripcion.setFecha(LocalDate.now());
+
+        // Actualizar la ocupación de la clase
+        clase.setOcupacionActual(clase.getOcupacionActual() + 1);
+        claseRepository.save(clase);
+
+        // Notificar por Kafka la actualización de ocupación
+        ClaseRegistradaDTO claseRegistrada = ClaseRegistradaDTO.builder()
+            .nombre(clase.getNombre())
+            .capacidadMaxima(clase.getCapacidadMaxima())
+            .entrenadorId(clase.getEntrenadorId())
+            .build();
+        kafkaTemplate.send("ocupacion-clases", claseRegistrada);
+
+        // Notificar al miembro por RabbitMQ
+        String mensaje = "El miembro con ID " + inscripcionDTO.getMiembroId() + " se ha inscrito a la clase " + clase.getNombre();
+        rabbitTemplate.convertAndSend("clase.exchange", "inscripcion.routingkey", mensaje);
+
         return inscripcionRepository.save(inscripcion);
     }
 
