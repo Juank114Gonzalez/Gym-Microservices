@@ -25,5 +25,22 @@ public class KafkaTopicConfig {
                 .configs(configs)
                 .build();
     }
+
+    @Bean
+    public NewTopic datosEntrenamientoTopic() {
+        return TopicBuilder.name("datos-entrenamiento")
+                .partitions(1)  // Número de particiones que desees
+                .replicas(1)  // Número de réplicas según tu configuración de clúster
+                .build();
+    }
+
+    @Bean
+    public NewTopic resumenEntrenamientoTopic() {
+        return TopicBuilder.name("resumen-entrenamiento")
+                .partitions(1)  // Asegúrate de usar una cantidad adecuada de particiones
+                .replicas(1)
+                .build();
+    }
+
  
 }

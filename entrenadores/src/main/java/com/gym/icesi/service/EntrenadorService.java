@@ -2,6 +2,7 @@ package com.gym.icesi.service;
 
 import com.gym.icesi.model.Entrenador;
 import com.gym.icesi.model.Especialidad;
+import com.gym.icesi.model.ResumenEntrenamiento;
 import com.gym.icesi.dto.ClaseRegistradaDTO;
 import com.gym.icesi.repository.EntrenadorRepository;
 import org.springframework.beans.factory.annotation.Autowired;

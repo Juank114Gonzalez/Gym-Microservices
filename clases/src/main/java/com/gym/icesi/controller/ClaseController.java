@@ -2,6 +2,8 @@ package com.gym.icesi.controller;
 
 import com.gym.icesi.model.Clase;
 import com.gym.icesi.model.Horario;
+import com.gym.icesi.model.DatosEntrenamiento;
+import com.gym.icesi.model.ResumenEntrenamiento;
 import com.gym.icesi.service.ClaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -98,6 +100,12 @@ public class ClaseController {
         }
     }
 
+    @PostMapping("/entrenamiento")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_TRAINER','ROLE_MEMBER')")
+    public void enviarDatosEntrenamiento(@RequestBody DatosEntrenamiento datos) {
+        claseService.enviarDatosEntrenamiento(datos);
+
+    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/seeder")

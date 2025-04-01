@@ -6,6 +6,8 @@ import com.gym.icesi.dto.ClaseRegistradaDTO;
 import com.gym.icesi.model.Clase;
 import com.gym.icesi.model.Inscripcion;
 import com.gym.icesi.model.Horario;
+import com.gym.icesi.model.DatosEntrenamiento;
+import com.gym.icesi.model.ResumenEntrenamiento;
 import com.gym.icesi.repository.ClaseRepository;
 import com.gym.icesi.repository.InscripcionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gym.icesi.client.EntrenadoresClient;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.kafka.support.SendResult;
 import java.time.LocalDate;
 
 import com.gym.icesi.model.Horario;
 import java.time.LocalDateTime;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import com.gym.icesi.client.MiembrosClient;
 import com.gym.icesi.dto.MiembroDTO;
 
@@ -46,6 +52,9 @@ public class ClaseService {
 
     @Autowired
     private KafkaTemplate<String, ClaseRegistradaDTO> kafkaTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, DatosEntrenamiento> kafkaTemplateEntrenamiento;
 
     private final String CLASSES_TOPIC_NAME = "ocupacion-clases";
 
@@ -238,5 +247,20 @@ public class ClaseService {
         System.out.println("Datos de ejemplo de clases cargados exitosamente.");
 
         return true;
+    }
+
+    public void enviarDatosEntrenamiento(DatosEntrenamiento datos) {
+        CompletableFuture<SendResult<String,DatosEntrenamiento>> future =kafkaTemplateEntrenamiento.send("datos-entrenamiento", ""+datos.getUsuarioId(), datos);
+
+        future.whenComplete((result, ex) -> {
+            if (ex == null) {
+                long offset = result.getRecordMetadata().offset();
+                int partition = result.getRecordMetadata().partition();
+                //offsetRepository.guardarOffset(result.getRecordMetadata().topic(), partition, offset);
+                System.out.println("Registro exitoso. Offset: " + offset + ", Partición: " + partition);
+            } else {
+                System.err.println("Error en el registro: " + ex.getMessage());
+            }
+        });
     }
 }
