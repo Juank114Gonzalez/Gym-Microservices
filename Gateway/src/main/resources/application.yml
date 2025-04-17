@@ -1,0 +1,93 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: apigateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/gimnasio
+          jwk-set-uri: http://localhost:8080/realms/gimnasio/protocol/openid-connect/certs
+      client:
+        registration:
+          keycloak:
+            client-id: gym-gateway
+            client-secret: TS8qUAhsiYPc7kBYnL4LBZDtT6ScL7DY
+            authorization-grant-type: authorization_code
+            scope: openid, profile, email, roles
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/gimnasio
+            authorization-uri: http://localhost:8080/realms/gimnasio/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/gimnasio/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/gimnasio/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8080/realms/gimnasio/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      default-filters:
+        - TokenRelay
+      routes:
+        - id: clases-service
+          uri: lb://clases-service
+          predicates:
+            - Path=/clases/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - StripPrefix=0
+        - id: entrenadores-service
+          uri: lb://entrenadores-service
+          predicates:
+            - Path=/entrenadores/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - StripPrefix=0
+        - id: miembros-service
+          uri: lb://miembros-service
+          predicates:
+            - Path=/miembros/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - StripPrefix=0
+        - id: equipos-service
+          uri: lb://equipos-service
+          predicates:
+            - Path=/equipos/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - StripPrefix=0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}:${random.value}
+
+keycloak:
+  realm: gimnasio
+  auth-server-url: http://localhost:8080
+  resource: gym-gateway
+  public-client: true
+  principal-attribute: preferred_username
+  use-resource-role-mappings: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG
+    org.springframework.security: DEBUG
+    com.gym.Gateway: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG
