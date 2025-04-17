@@ -18,6 +18,10 @@ public class CustomJsonDeserializer implements Deserializer<Object> {
 
     @Override
     public Object deserialize(String topic, byte[] data) {
+        if (data == null) {
+            return null;
+        }
+        
         try {
             // Convertir los bytes a string para inspeccionar el contenido
             String json = new String(data);

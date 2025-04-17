@@ -3,9 +3,6 @@ package com.gym.icesi.config;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -20,10 +17,7 @@ import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.support.serializer.JsonSerde;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.StringDeserializer;
-
+import org.springframework.beans.factory.annotation.Value;
 
 import com.gym.icesi.model.DatosEntrenamiento;
 import com.gym.icesi.model.ResumenEntrenamiento;
@@ -32,6 +26,9 @@ import com.gym.icesi.model.ResumenEntrenamiento;
 @EnableKafkaStreams
 public class KafkaStreamsConfig {
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
     /**
      * Configuración base para Kafka Streams
      */
@@ -39,7 +36,7 @@ public class KafkaStreamsConfig {
     public KafkaStreamsConfiguration defaultKafkaStreamsConfig() {
         Map<String, Object> props = new HashMap<>();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "datos-entrenamiento-app");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, JsonSerde.class.getName());
         
@@ -47,14 +44,15 @@ public class KafkaStreamsConfig {
     }
 
     @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_BUILDER_BEAN_NAME)
-    public StreamsBuilderFactoryBean streamsBuilderFactoryBean(KafkaProperties kafkaProperties) {
-        Map<String, Object> config = new HashMap<>(kafkaProperties.buildStreamsProperties());
-
-        // Agregar configuraciones adicionales si es necesario
+    public StreamsBuilderFactoryBean streamsBuilderFactoryBean() {
+        Map<String, Object> config = new HashMap<>();
+        
+        // Configuraciones básicas
         config.put(StreamsConfig.APPLICATION_ID_CONFIG, "datos-entrenamiento");
-        config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
+        config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         config.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, new JsonSerde<>(DatosEntrenamiento.class).getClass().getName());
+        
         return new StreamsBuilderFactoryBean(new KafkaStreamsConfiguration(config));
     }
 

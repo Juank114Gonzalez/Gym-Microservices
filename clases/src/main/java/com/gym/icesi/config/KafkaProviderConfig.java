@@ -1,6 +1,7 @@
-package co.edu.icesi.config; 
+package com.gym.icesi.config; 
 
 import com.gym.icesi.dto.ClaseRegistradaDTO;
+import com.gym.icesi.model.DatosEntrenamiento;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,4 +40,13 @@ public class KafkaProviderConfig {
         return new KafkaTemplate<>(producerFactory);
     }
 
+    @Bean
+    public ProducerFactory<String, DatosEntrenamiento> datosEntrenamientoProducerFactory(){
+        return new DefaultKafkaProducerFactory<>(producerConfig());
+    } 
+
+    @Bean
+    public KafkaTemplate<String, DatosEntrenamiento> kafkaTemplateEntrenamiento(ProducerFactory<String, DatosEntrenamiento> datosEntrenamientoProducerFactory){
+        return new KafkaTemplate<>(datosEntrenamientoProducerFactory);
+    }
 }
