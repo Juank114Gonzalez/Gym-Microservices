@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import com.gym.icesi.dto.InscripcionDTO;
 import com.gym.icesi.model.Inscripcion;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/clases")
@@ -57,6 +60,36 @@ public class ClaseController {
     public ResponseEntity<List<Clase>> obtenerTodasClases() {
         List<Clase> clases = claseService.obtenerTodasClases();
         return ResponseEntity.ok(clases);
+    }
+
+    @Operation(
+        summary = "Obtener clases por miembro",
+        description = "Recupera las clases a las que está inscrito un miembro específico.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Lista de clases del miembro recuperada exitosamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado para ver clases del miembro")
+        }
+    )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TRAINER')")
+    @GetMapping("/miembro/{idMiembro}")
+    public ResponseEntity<Map<String, Object>> obtenerClasesPorMiembro(@PathVariable Long idMiembro) {
+        try {
+            List<Inscripcion> inscripciones = claseService.obtenerInscripcionesPorMiembro(idMiembro);
+            List<Clase> clasesDelMiembro = inscripciones.stream()
+                    .map(inscripcion -> inscripcion.getClase())
+                    .collect(Collectors.toList());
+            
+            Map<String, Object> respuesta = new HashMap<>();
+            respuesta.put("idMiembro", idMiembro);
+            respuesta.put("clasesInscritas", clasesDelMiembro);
+            respuesta.put("total", clasesDelMiembro.size());
+            
+            return ResponseEntity.ok(respuesta);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "No se pudieron obtener las clases del miembro: " + e.getMessage());
+            return ResponseEntity.ok(error);
+        }
     }
 
     @Operation(

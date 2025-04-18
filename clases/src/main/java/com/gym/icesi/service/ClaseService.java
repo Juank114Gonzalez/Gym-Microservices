@@ -102,7 +102,44 @@ public class ClaseService {
         return clases;
     }
 
-    
+    /**
+     * Obtiene las inscripciones de un miembro específico
+     * @param miembroId ID del miembro
+     * @return Lista de inscripciones del miembro
+     */
+    public List<Inscripcion> obtenerInscripcionesPorMiembro(Long miembroId) {
+        // Verificar si el miembro existe
+        try {
+            MiembroDTO miembro = miembrosClient.getOneMiembro(miembroId);
+            if (miembro == null) {
+                throw new RuntimeException("Miembro no encontrado");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al verificar el miembro: " + e.getMessage());
+        }
+        
+        // Obtener las inscripciones del miembro
+        List<Inscripcion> inscripciones = inscripcionRepository.findByMiembroId(miembroId);
+        
+        // Actualizar la información del entrenador en cada clase
+        for (Inscripcion inscripcion : inscripciones) {
+            Clase clase = inscripcion.getClase();
+            try {
+                EntrenadorDTO entrenador = entrenadoresClient.getOneEntrenador(clase.getEntrenadorId());
+                if (entrenador != null) {
+                    clase.setNombreEntrenador(entrenador.getNombre());
+                    clase.setEspecialidadEntrenador(entrenador.getEspecialidad());
+                }
+            } catch (Exception e) {
+                clase.setNombreEntrenador("No disponible");
+                clase.setEspecialidadEntrenador(null);
+                System.err.println("Error al obtener información del entrenador: " + e.getMessage());
+            }
+        }
+        
+        return inscripciones;
+    }
+
     @Transactional
     public Clase editarHorario(Horario horario, Long id) {
         Clase clase = claseRepository.findById(id).orElse(null);
@@ -125,9 +162,6 @@ public class ClaseService {
         notificacion);
         return claseRepository.save(clase);   
     }
-
-   
-
 
     private void saveClase(Clase claseNueva) {
         if (claseNueva.getHorario() == null) {

@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/entrenadores")
@@ -82,6 +84,36 @@ public class EntrenadorController {
     @GetMapping("/{id}")
     public Entrenador obtenerEntrenador(@PathVariable Long id) {
         return entrenadorService.obtenerEntrenador(id);
+    }
+
+    @Operation(
+        summary = "Obtener entrenador asignado a un miembro",
+        description = "Recupera el entrenador asignado a un miembro específico por su ID",
+        parameters = {
+            @Parameter(name = "idMiembro", description = "ID del miembro", required = true)
+        },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Entrenador del miembro encontrado"),
+            @ApiResponse(responseCode = "404", description = "Entrenador o miembro no encontrado"),
+            @ApiResponse(responseCode = "403", description = "No autorizado para ver el entrenador del miembro")
+        }
+    )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TRAINER')")
+    @GetMapping("/miembro/{idMiembro}")
+    public ResponseEntity<Map<String, Object>> obtenerEntrenadorPorMiembro(@PathVariable Long idMiembro) {
+        try {
+            Entrenador entrenador = entrenadorService.obtenerEntrenadorPorMiembro(idMiembro);
+            
+            Map<String, Object> respuesta = new HashMap<>();
+            respuesta.put("idMiembro", idMiembro);
+            respuesta.put("entrenador", entrenador);
+            
+            return ResponseEntity.ok(respuesta);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "No se pudo obtener el entrenador del miembro: " + e.getMessage());
+            return ResponseEntity.ok(error);
+        }
     }
 
     @Operation(

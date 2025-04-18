@@ -65,6 +65,14 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - StripPrefix=0
+        - id: miembro-agregado-route
+          uri: no://op
+          predicates:
+            - Path=/miembro-agregado/**
+          filters:
+            - name: Aggregation
+              args:
+                enabled: true
 
 eureka:
   client:

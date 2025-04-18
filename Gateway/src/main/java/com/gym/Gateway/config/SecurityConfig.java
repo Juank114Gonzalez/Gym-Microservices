@@ -29,7 +29,9 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers("/entrenadores/public/**").permitAll()
+                        .pathMatchers("/test/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_MEMBER")
                         .pathMatchers("/miembros/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER")
+                        .pathMatchers("/miembro-agregado/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER")
                         .pathMatchers("/clases/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_MEMBER")
                         .pathMatchers("/entrenadores/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_MEMBER")
                         .pathMatchers("/equipos/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_MEMBER")
